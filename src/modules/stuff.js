@@ -1,7 +1,27 @@
-import * as allActions from './allActions';
+/* ACTION TYPES */
+export const FETCH_STUFF = 'FETCH_STUFF';
+export const RECEIVE_STUFF = 'RECEIVE_STUFF';
 
-export function receiveStuff(data) {
-    return {type: allActions.RECEIVE_STUFF, stuff: data};
+/* REDUCER */
+const initialState = [];
+
+export default function stuff(state = initialState, action) {
+  let newState;
+  switch (action.type) {
+    case FETCH_STUFF:
+      return action;
+    case RECEIVE_STUFF:
+      newState = action.stuff;
+      return newState;
+    default:
+      return state;
+  }
+}
+
+
+/* ACTION CREATORS */
+function receiveStuff(data) {
+    return {type: RECEIVE_STUFF, stuff: data};
 }
 
 export function fetchStuff() {

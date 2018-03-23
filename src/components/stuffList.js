@@ -1,15 +1,15 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import * as stuffActions from '../actions/stuffActions';
+import { fetchStuff } from '../modules/stuff';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 class stuffList extends React.Component {
     componentWillMount() {
-        this.props.stuffActions.fetchStuff();
+        this.props.fetchStuff();
     }
 
-    renderData(item) {
+    renderData = (item) => {
         return <div key={item.id}>{item.name}</div>;
     }
 
@@ -17,14 +17,14 @@ class stuffList extends React.Component {
         if(!this.props.stuff){
             return (
                 <div>
-                    Loading Stuff...
+                    { 'Loading Stuff...' }
                 </div>
             )
         }else{
             return (
                 <div className="">
                     {
-                        this.props.stuff.map((item, index) => {
+                        this.props.stuff.map((item) => {
                             return (
                                 this.renderData(item)
                             );
@@ -37,7 +37,7 @@ class stuffList extends React.Component {
 }
 
 stuffList.propTypes = {
-    stuffActions: PropTypes.object,
+    fetchStuff: PropTypes.func.isRequired,
     stuff: PropTypes.array
 };
 
@@ -48,9 +48,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-       stuffActions: bindActionCreators(stuffActions, dispatch)
-    };
+  return bindActionCreators({
+    fetchStuff,
+  }, dispatch)
 }
 
 export default connect(
