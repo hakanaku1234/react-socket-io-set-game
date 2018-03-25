@@ -12,8 +12,14 @@ svg + svg {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition-duration: 0.2s;
 }
 
+.card--selected {
+  border: 2px solid blue;
+  padding: 3px;
+  transform:scale(1.065, 1.1);
+}
 .board {
   display: flex;
   flex-wrap: wrap;
