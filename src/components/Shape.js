@@ -13,7 +13,7 @@ function createKey( rgb ) {
     case RED: return 'RED';
     case GREEN: return 'GREEN';
     case PURPLE: return 'PURPLE';
-    default: ''
+    default: return ''
   }
 }
 class Shape extends React.Component {
@@ -45,8 +45,8 @@ class Shape extends React.Component {
     const { color, shade, shape } = this.props;
 
     let fill = 'transparent'
-    if (shade == STRIPED) { fill = `url(#pattern-stripe-${createKey(color)})` }
-    if (shade == SOLID) { fill = color }
+    if (shade === STRIPED) { fill = `url(#pattern-stripe-${createKey(color)})` }
+    if (shade === SOLID) { fill = color }
 
     const borderSize = 3
     const w = 40
@@ -66,8 +66,8 @@ class Shape extends React.Component {
         height: h + borderSize * 2,
       } }
       >
-        { shade == STRIPED && this.getStripedDef() }
-        { shape == DIAMOND &&
+        { shade === STRIPED && this.getStripedDef() }
+        { shape === DIAMOND &&
           <polygon
             points={ diamondPoints.join(',')}
             strokeWidth={ borderSize }
@@ -75,7 +75,7 @@ class Shape extends React.Component {
             fill={ fill }
           />
         }
-        { shape == OVAL &&
+        { shape === OVAL &&
           <rect
             x={ borderSize }
             y={ borderSize }
@@ -88,7 +88,7 @@ class Shape extends React.Component {
             strokeWidth={ borderSize }
           />
         }
-        { shape == SQUIGGLE &&
+        { shape === SQUIGGLE &&
           <Squiggle
             stroke={ color }
             fill={ fill }

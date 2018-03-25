@@ -7,7 +7,6 @@ import {
   EMPTY, STRIPED, SOLID,
   DIAMOND, OVAL, SQUIGGLE
 } from '../attributes'
-
 class Card extends React.Component {
   render() {
     const { count, ...rest } = this.props

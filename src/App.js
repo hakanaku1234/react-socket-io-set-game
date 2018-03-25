@@ -32,9 +32,9 @@ class App extends Component {
 }
 
 App.propTypes= {
-  board: PropTypes.array.isRequired,
+  board: PropTypes.arrayOf(PropTypes.number).isRequired,
   deal: PropTypes.func.isRequired,
-  deck: PropTypes.array.isRequired,
+  deck: PropTypes.arrayOf(PropTypes.number).isRequired,
   startNewGame: PropTypes.func.isRequired,
 }
 

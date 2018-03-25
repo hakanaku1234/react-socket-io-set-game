@@ -1,9 +1,3 @@
-import {
-  RED, GREEN, PURPLE,
-  EMPTY, STRIPED, SOLID,
-  DIAMOND, OVAL, SQUIGGLE
-} from '../attributes'
-
 /* ACTION TYPES */
 export const START_NEW_GAME = 'START_NEW_GAME';
 export const DEAL = 'DEAL';
@@ -32,21 +26,7 @@ function shuffle(a) {
 }
 
 function getNewDeck() {
-  const counts = [1,2,3]
-  const colors = [RED, GREEN, PURPLE]
-  const shades = [EMPTY, STRIPED, SOLID]
-  const shapes = [DIAMOND, OVAL, SQUIGGLE]
-
-  let deck = []
-  for (let count of counts) {
-    for (let color of colors) {
-      for (let shade of shades) {
-        for (let shape of shapes) {
-          deck.push({ count, color, shade, shape })
-        }
-      }
-    }
-  }
+  let deck = [...Array(81)].map((x,i)=>i)
   shuffle(deck);
   return deck
 }
