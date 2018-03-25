@@ -1,3 +1,5 @@
+import openSocket from 'socket.io-client';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux'
@@ -9,7 +11,24 @@ import Card from './Card'
 
 import { _DECK } from '../attributes'
 
-class Board extends React.Component {
+const  socket = openSocket('http://localhost:8000');
+
+function subscribeToTimer(cb) {
+  socket.on('sync', board => cb(null, board));
+  socket.emit('subscribeToSync', 500);
+}
+
+class MultiplayerBoard extends React.Component {
+
+  constructor() {
+    super()
+    subscribeToTimer((err, board) =>  {
+      this.setState({ board })
+    });
+  }
+  state = {
+    board: []
+  }
 
   _clickCard = (deckIndex) => () => {
     this.props.clickCard(deckIndex)
@@ -18,7 +37,7 @@ class Board extends React.Component {
   render() {
     return (
       <div className='board'>
-        { this.props.board.map((deckIndex) => {
+        { this.state.board.map((deckIndex) => {
           const cardObj = _DECK[deckIndex]
           return (
             <Card
@@ -37,7 +56,7 @@ class Board extends React.Component {
   }
 }
 
-Board.propTypes = {
+MultiplayerBoard.propTypes = {
   board: PropTypes.arrayOf(PropTypes.number).isRequired,
   clickCard: PropTypes.func.isRequired,
   selected: PropTypes.objectOf(PropTypes.bool).isRequired,
@@ -55,4 +74,4 @@ function mapDispatch(dispatch) {
     clickCard,
   }, dispatch)
 }
-export default connect(mapState, mapDispatch)(Board);
+export default connect(mapState, mapDispatch)(MultiplayerBoard);
