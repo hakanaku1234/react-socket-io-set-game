@@ -1,14 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Squiggle from './Squiggle'
 import {
   RED, GREEN, PURPLE,
   EMPTY, STRIPED, SOLID,
   DIAMOND, OVAL, SQUIGGLE
 } from '../attributes'
 
+function createKey( rgb ) {
+  switch (rgb) {
+    case RED: return 'RED';
+    case GREEN: return 'GREEN';
+    case PURPLE: return 'PURPLE';
+    default: ''
+  }
+}
 class Shape extends React.Component {
-
   getStripedDef() {
     const { color } = this.props
     const stripeSpacing = 5
@@ -16,7 +24,7 @@ class Shape extends React.Component {
     return (
       <defs>
         <pattern
-          id="pattern-stripe"
+          id={`pattern-stripe-${createKey(color)}`}
           width={ stripeSpacing }
           height="4"
           patternUnits="userSpaceOnUse"
@@ -37,10 +45,10 @@ class Shape extends React.Component {
     const { color, shade, shape } = this.props;
 
     let fill = 'transparent'
-    if (shade == STRIPED) { fill = 'url(#pattern-stripe)' }
+    if (shade == STRIPED) { fill = `url(#pattern-stripe-${createKey(color)})` }
     if (shade == SOLID) { fill = color }
 
-    const borderSize = 5
+    const borderSize = 3
     const w = 40
     const h = 80
 
@@ -50,12 +58,12 @@ class Shape extends React.Component {
       `${w / 2 + borderSize} ${h + borderSize}`, //south
       `${borderSize} ${h / 2 + borderSize}`, //west
     ]
+
     return (
       <svg style={ {
         display: 'inline-block',
         width: w + borderSize * 2,
         height: h + borderSize * 2,
-        marginRight: 10
       } }
       >
         { shade == STRIPED && this.getStripedDef() }
@@ -79,17 +87,14 @@ class Shape extends React.Component {
             fill={ fill }
             strokeWidth={ borderSize }
           />
-          // <ellipse
-          //   cx={ (w / 2) + borderSize }
-          //   cy={ (h / 2) + borderSize }
-          //   rx={ w / 2 }
-          //   ry={ h / 2 }
-          //   stroke={ color }
-          //   fill={ fill }
-          //   strokeWidth={ borderSize }
-          // />
         }
-
+        { shape == SQUIGGLE &&
+          <Squiggle
+            stroke={ color }
+            fill={ fill }
+            strokeWidth={ borderSize }
+          />
+        }
       </svg>
     )
   }

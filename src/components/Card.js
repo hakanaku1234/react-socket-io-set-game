@@ -8,21 +8,11 @@ import {
   DIAMOND, OVAL, SQUIGGLE
 } from '../attributes'
 
-const cardStyle = {
-  border: '1px solid black',
-  borderRadius: 4,
-  height: 150,
-  width: 200,
-  padding: 4,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-}
 class Card extends React.Component {
   render() {
     const { count, ...rest } = this.props
     return (
-      <div style={ cardStyle }>
+      <div className='card'>
         { [...Array(count)].map((x, i) =>
           <Shape
             key={ i }
