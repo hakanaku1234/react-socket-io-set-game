@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux';
-
-import { clickCard } from '../modules/cards'
 
 import Card from './Card'
 
 import { _DECK } from '../attributes'
 
 class Board extends React.Component {
-
-  _clickCard = (deckIndex) => () => {
-    this.props.clickCard(deckIndex)
-  }
 
   render() {
     return (
@@ -22,7 +14,7 @@ class Board extends React.Component {
           const cardObj = _DECK[deckIndex]
           return (
             <Card
-              onClick={ this._clickCard(deckIndex) }
+              onClick={ this.props.clickCard(deckIndex) }
               selected={ !!this.props.selected[deckIndex] }
               key={ deckIndex }
               count={ cardObj.count }
@@ -43,16 +35,4 @@ Board.propTypes = {
   selected: PropTypes.objectOf(PropTypes.bool).isRequired,
 }
 
-function mapState(state) {
-  const { board, selected } = state.cards
-  return {
-    board,
-    selected,
-  }
-}
-function mapDispatch(dispatch) {
-  return bindActionCreators({
-    clickCard,
-  }, dispatch)
-}
-export default connect(mapState, mapDispatch)(Board);
+export default Board;

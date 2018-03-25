@@ -1,15 +1,15 @@
 import React from 'react';
 
 import Controls from './components/Controls';
-import MultiplayerBoard from './components/MultiplayerBoard';
-import Board from './components/Board';
+import MultiPlayerBoard from './components/MultiPlayerBoard';
+import SinglePlayerBoard from './components/SinglePlayerBoard';
 
 function App() {
   return (
     <div className="app">
       <Controls/>
-      <MultiplayerBoard/>
-      <Board/>
+      <MultiPlayerBoard/>
+      <SinglePlayerBoard/>
     </div>
   );
 }
