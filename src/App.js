@@ -1,33 +1,54 @@
+import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux';
+
+import { deal, startNewGame } from './modules/cards'
 import Board from './components/Board';
 
-import {
-  RED, GREEN, PURPLE,
-  EMPTY, STRIPED, SOLID,
-  DIAMOND, OVAL, SQUIGGLE
- } from './attributes'
-
- const dummyCards = [
-   { count: 1, color: RED, shade: STRIPED, shape: SQUIGGLE },
-   { count: 2, color: GREEN, shade: SOLID, shape: DIAMOND },
-   { count: 3, color: PURPLE, shade: STRIPED, shape: DIAMOND },
-   { count: 1, color: RED, shade: EMPTY, shape: OVAL },
-   { count: 2, color: GREEN, shade: SOLID, shape: DIAMOND },
-   { count: 3, color: PURPLE, shade: STRIPED, shape: DIAMOND },
-   { count: 2, color: RED, shade: EMPTY, shape: OVAL },
-   { count: 2, color: GREEN, shade: SOLID, shape: DIAMOND },
-   { count: 3, color: PURPLE, shade: STRIPED, shape: SQUIGGLE },
- ]
 class App extends Component {
   render() {
+    const { deck, board, startNewGame, deal } = this.props
     return (
       <div className="app">
+        <button
+          onClick={ startNewGame }
+        >
+          { 'New Game' }
+        </button>
+        <button
+          onClick={ deal }
+        >
+          { 'Deal' }
+        </button>
+        { `Cards left: ${deck.length}` }
         <Board
-          displayedCards={ dummyCards }
+          displayedCards={ board }
         />
       </div>
     );
   }
 }
 
-export default App;
+App.propTypes= {
+  board: PropTypes.array.isRequired,
+  deal: PropTypes.func.isRequired,
+  deck: PropTypes.array.isRequired,
+  startNewGame: PropTypes.func.isRequired,
+}
+
+function mapState(state) {
+  const { deck, board } = state.cards
+  return {
+    deck,
+    board,
+  }
+}
+function mapDispatch(dispatch) {
+  return bindActionCreators({
+    deal,
+    startNewGame
+  }, dispatch)
+}
+export default connect(mapState, mapDispatch)(App);

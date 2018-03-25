@@ -12,8 +12,9 @@ class Board extends React.Component {
   render() {
     return (
       <div className='board'>
-        { this.props.displayedCards.map(cardObj =>
+        { this.props.displayedCards.map((cardObj, i) =>
           <Card
+            key={ i }
             count={ cardObj.count }
             color={ cardObj.color }
             shade={ cardObj.shade }
