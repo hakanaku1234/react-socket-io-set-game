@@ -28,7 +28,7 @@ function Squiggle(sProps) {
         `m ${scale(43,pct)},${scale(176.4,pct)}
         ${ cPoints.map(row =>
           'c ' + row.map(point => scale(point[0]*1.2, pct) + ',' + scale(point[1], pct))
-        ) }
+        ).join(' ') }
         z` }
       { ...sProps }
     />
