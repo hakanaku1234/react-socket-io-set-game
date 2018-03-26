@@ -64,7 +64,7 @@ function _toggleCard(index, state) {
   selected = Object.assign({}, selected)
   if (selected[index]) {
     delete selected[index]
-  } else {
+  } else if (Object.keys(selected).length < 3) {
     selected[index] = true
   }
   return Object.assign({}, state, {

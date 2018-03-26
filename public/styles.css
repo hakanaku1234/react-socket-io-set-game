@@ -13,6 +13,7 @@ svg + svg {
   align-items: center;
   justify-content: center;
   transition-duration: 0.2s;
+  cursor: pointer;
 }
 
 .card--selected {
