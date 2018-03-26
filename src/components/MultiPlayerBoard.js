@@ -36,6 +36,7 @@ class MultiPlayerBoard extends React.Component {
     return (
       <React.Fragment>
         <MultiPlayerControls
+          board={ this.state.board }
           deck={ this.state.deck }
           collected={ this.state.collected }
         />

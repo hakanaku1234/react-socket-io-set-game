@@ -27,7 +27,7 @@ class Board extends React.Component {
     return (
       <TransitionGroup
         appear
-        className='board'
+        className='board container is-fluid'
       >
         { this.props.board.map((deckIndex, i) => {
           if (deckIndex === null) { return null }

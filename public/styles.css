@@ -65,3 +65,8 @@ svg + svg {
   opacity: 0;
   transition: opacity 200ms linear;
 }
+
+.container.is-fluid {
+  margin-left: 32px !important;
+  margin-right: 32px !important;
+}
