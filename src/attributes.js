@@ -3,17 +3,17 @@
   so that we avoid typos in string props
 */
 
-export const RED = 'rgb(178, 21, 21)'
-export const GREEN = 'rgb(47, 137, 15)'
-export const PURPLE = 'rgb(105, 35, 175)'
+const RED = 'rgb(178, 21, 21)'
+const GREEN = 'rgb(47, 137, 15)'
+const PURPLE = 'rgb(105, 35, 175)'
 
-export const EMPTY = 'EMPTY'
-export const STRIPED = 'STRIPED'
-export const SOLID = 'SOLID'
+const EMPTY = 'EMPTY'
+const STRIPED = 'STRIPED'
+const SOLID = 'SOLID'
 
-export const DIAMOND = 'DIAMOND'
-export const OVAL = 'OVAL'
-export const SQUIGGLE = 'SQUIGGLE'
+const DIAMOND = 'DIAMOND'
+const OVAL = 'OVAL'
+const SQUIGGLE = 'SQUIGGLE'
 
 
 const counts = [1,2,3]
@@ -21,7 +21,7 @@ const colors = [RED, GREEN, PURPLE]
 const shades = [EMPTY, STRIPED, SOLID]
 const shapes = [DIAMOND, OVAL, SQUIGGLE]
 
-export let _DECK = []
+let _DECK = []
 for (let count of counts) {
   for (let color of colors) {
     for (let shade of shades) {
@@ -30,4 +30,17 @@ for (let count of counts) {
       }
     }
   }
+}
+
+module.exports = {
+  RED,
+  GREEN,
+  PURPLE,
+  EMPTY,
+  STRIPED,
+  SOLID,
+  DIAMOND,
+  OVAL,
+  SQUIGGLE,
+  _DECK,
 }

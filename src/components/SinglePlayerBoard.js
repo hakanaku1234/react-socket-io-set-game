@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 
 import { clickCard } from '../modules/cards'
 
+import SinglePlayerControls from './SinglePlayerControls'
 import Board from './Board'
 
 class SinglePlayerBoard extends React.Component {
@@ -16,11 +17,14 @@ class SinglePlayerBoard extends React.Component {
   render() {
     const { board, selected } = this.props
     return (
-      <Board
-        board={ board }
-        selected={ selected }
-        clickCard={ this._clickCard }
-      />
+      <React.Fragment>
+        <SinglePlayerControls/>
+        <Board
+          board={ board }
+          selected={ selected }
+          clickCard={ this._clickCard }
+        />
+      </React.Fragment>
     )
   }
 }

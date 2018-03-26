@@ -4,11 +4,12 @@ import classnames from 'classnames'
 
 import Shape from './Shape'
 
-import {
+const {
   RED, GREEN, PURPLE,
   EMPTY, STRIPED, SOLID,
   DIAMOND, OVAL, SQUIGGLE
-} from '../attributes'
+} = require('../attributes')
+
 function Card(props) {
   const { count, onClick, selected, ...rest } = props
   return (

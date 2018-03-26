@@ -2,41 +2,45 @@ import openSocket from 'socket.io-client';
 
 import React from 'react';
 
+import MultiPlayerControls from './MultiPlayerControls'
 import Board from './Board'
 
 const  socket = openSocket('http://localhost:8000');
-
-function subscribeToSync(cb) {
-  socket.on('sync', state => cb(null, state));
-  socket.emit('subscribeToSync', 200);
-}
 
 class MultiplayerBoard extends React.Component {
 
   constructor() {
     super()
-    subscribeToSync((err, state) =>  {
-      const { board, selected } = state
-      this.setState({ board, selected })
-    });
+    socket.on('sync', state => {
+      const { board, selected, deck, collected } = state
+      this.setState({ board, selected, deck, collected })
+    })
   }
   state = {
     board: [],
-    selected: {}
+    selected: {},
+    deck: [],
+    collected: [],
   }
 
   _clickCard = (deckIndex) => () => {
-    socket.emit('clickCard', deckIndex)
+    socket.emit('click_card', deckIndex)
   }
 
   render() {
     const { board, selected } = this.state
     return (
-      <Board
-        board={ board }
-        selected={ selected }
-        clickCard={ this._clickCard }
-      />
+      <React.Fragment>
+        <MultiPlayerControls
+          deck={ this.state.deck }
+          collected={ this.state.collected }
+        />
+        <Board
+          board={ board }
+          selected={ selected }
+          clickCard={ this._clickCard }
+        />
+      </React.Fragment>
     )
   }
 }

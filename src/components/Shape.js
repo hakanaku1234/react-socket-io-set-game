@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Squiggle from './Squiggle'
-import {
+
+const {
   RED, GREEN, PURPLE,
   EMPTY, STRIPED, SOLID,
   DIAMOND, OVAL, SQUIGGLE
-} from '../attributes'
+} = require('../attributes')
 
 function createKey( rgb ) {
   switch (rgb) {

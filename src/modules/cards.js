@@ -1,66 +1,29 @@
-import { _DECK } from '../attributes'
-const { getNewDeck } = require('../utils')
+
+const { cardsInitialState, _startNewGame, _deal, _toggleCard, _checkSet, _collectSet } = require('../utils')
 /* ACTION TYPES */
 export const START_NEW_GAME = 'START_NEW_GAME';
 export const DEAL = 'DEAL';
 export const TOGGLE_CARD = 'TOGGLE_CARD';
 export const RESET_SELECTED = 'RESET_SELECTED';
 export const COLLECT_SET = 'COLLECT_SET'
-/* REDUCER */
-const initialState = {
-  deck: [],
-  board: [],
-  collected: [],
-  selected: {}
-};
 
-export default function (state = initialState, action) {
+/* REDUCER */
+export default function (state = cardsInitialState, action) {
   switch (action.type) {
     case START_NEW_GAME: {
-      let newDeck = getNewDeck();
-      let board = newDeck.splice(0, 12)
-      return Object.assign({}, initialState, {
-        deck: [ ...newDeck ],
-        board,
-      });
-
+      return _startNewGame()
     }
     case DEAL: {
-      let { deck, board } = state
-      let newCards = deck.splice(0, 3)
-      return Object.assign({}, state, {
-        deck: [ ...deck ],
-        board: [ ...board, ...newCards ]
-      })
+      return _deal(state)
     }
     // case COLLECT:
     case TOGGLE_CARD: {
-      let { selected } = state
-      //use a new object for immutablity
-      selected = Object.assign({}, selected)
       const { index } = action
-      if (selected[index]) {
-        delete selected[index]
-      } else {
-        selected[index] = true
-      }
-      return Object.assign({}, state, {
-        selected
-      })
+      return _toggleCard(index, state)
     }
     case COLLECT_SET: {
-      //move indices from board to collected
-      let { board, collected } = state
-      board = [ ...board ]
-      collected = [ ...collected ]
-      for (let index of action.indices) {
-        board.splice(board.indexOf(index), 1)
-        collected.push(index)
-      }
-      return Object.assign({}, state, {
-        board,
-        collected,
-      })
+      const { indices } = action
+      return _collectSet(indices, state)
     }
     case RESET_SELECTED:
       return Object.assign({}, state, {
@@ -111,33 +74,17 @@ function checkSelected() {
 
 function checkSet(indices) {
   return function(dispatch, getState) {
-    const attrs = ['color', 'count', 'shape', 'shade']
-    const attrCounts = {}
-    for (let i of indices) {
-      const card = _DECK[i]
-      for (let attr of attrs) {
-        attrCounts[attr] = attrCounts[attr] || new Set();
-        attrCounts[attr].add(card[attr])
+    _checkSet(indices, () => {
+      console.log('you found a set!')
+      dispatch({
+        type: COLLECT_SET,
+        indices
+      })
+      if (getState().cards.board.length < 12) {
+        dispatch(deal())
       }
-    }
-    for (let attr in attrCounts) {
-      if (attrCounts[attr].size === 2) {
-        /* bad set. attribute must either be all different (3)
-            or all the same (1)
-          */
-          console.log('bad set')
-        return;
-      }
-    }
-          console.log('you found a set!')
-
-    dispatch({
-      type: COLLECT_SET,
-      indices
     })
-    if (getState().cards.board.length < 12) {
-      dispatch(deal())
-    }
+
   }
 
 }

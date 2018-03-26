@@ -1,4 +1,3 @@
-import openSocket from 'socket.io-client';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux'
@@ -6,24 +5,11 @@ import { bindActionCreators } from 'redux';
 
 import { deal, startNewGame } from '../modules/cards'
 
-const  socket = openSocket('http://localhost:8000');
-
-
-class Controls extends React.Component {
-
-  startMultiNewGame = () => {
-    socket.emit('new_game')
-  }
-
+class SinglePlayerControls extends React.Component {
   render() {
     const { deck, collected, startNewGame, deal } = this.props
     return (
       <React.Fragment>
-        <button
-          onClick={ this.startMultiNewGame }
-        >
-          { 'New Multi Player Game' }
-        </button>
         <button
           onClick={ startNewGame }
         >
@@ -41,7 +27,7 @@ class Controls extends React.Component {
   }
 }
 
-Controls.propTypes= {
+SinglePlayerControls.propTypes= {
   collected: PropTypes.arrayOf(PropTypes.number).isRequired,
   deal: PropTypes.func.isRequired,
   deck: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -61,4 +47,4 @@ function mapDispatch(dispatch) {
     startNewGame
   }, dispatch)
 }
-export default connect(mapState, mapDispatch)(Controls);
+export default connect(mapState, mapDispatch)(SinglePlayerControls);

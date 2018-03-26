@@ -3,7 +3,7 @@ import React from 'react';
 
 import Card from './Card'
 
-import { _DECK } from '../attributes'
+const { _DECK } = require('../attributes')
 
 class Board extends React.Component {
 
