@@ -15,7 +15,7 @@ let lockTimeout;
 io.on('connection', (client) => {
   function sync() {
     io.emit('sync', gameState)
-    io.emit('is_locked', !!gameState.lockedUsers[client.id])
+    io.to(client.id).emit('is_locked', !!gameState.lockedUsers[client.id])
   }
 
   function setCountDown() {
