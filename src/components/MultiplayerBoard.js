@@ -13,11 +13,9 @@ class MultiplayerBoard extends React.Component {
     super()
     socket.on('sync', state => {
       const { board, selected, deck, collected } = state
-      console.log(selected)
       this.setState({ board, selected, deck, collected })
     })
     socket.on('is_locked', isLocked => {
-      console.log('locked?', isLocked)
       this.setState({ isLocked })
     })
   }

@@ -1,4 +1,4 @@
-const { cardsInitialState, _startNewGame, _toggleCard, _checkSet, _collectSet, _deal } = require('./src/utils')
+const { cardsInitialState, _startNewGame, _toggleCard, _checkSet, _collectSet, _deal, _cleanBoard, tTime } = require('./src/utils')
 
 const io = require('socket.io')();
 
@@ -18,6 +18,10 @@ io.on('connection', (client) => {
     io.to(client.id).emit('is_locked', !!gameState.lockedUsers[client.id])
   }
 
+  let modStateAndSync = (fn) => (...args) => {
+    gameState = fn(...args)
+    sync()
+  }
   function setCountDown() {
     if (!gameState.activeUser) {
       gameState.activeUser = client.id
@@ -34,20 +38,17 @@ io.on('connection', (client) => {
   sync()
 
   client.on('new_game', () => {
-    gameState = _startNewGame(serverInitialState)
-    sync()
+    modStateAndSync(_startNewGame)(serverInitialState)
   })
 
   client.on('deal', () => {
-    gameState = _deal(gameState)
-    sync()
+    modStateAndSync(_deal)(gameState)
   })
   client.on('click_card', (cardIndex) => {
     if (gameState.lockedUsers[client.id]) { return; }
     setCountDown() //sets activeUser, must do this before activeUser check below
     if (gameState.activeUser !== client.id) { return; }
-    gameState = _toggleCard(cardIndex, gameState)
-
+    modStateAndSync(_toggleCard)(cardIndex, gameState)
     const { selected } =  gameState
     const indices = Object.keys(selected).map(str => parseInt(str))
     if (indices.length === 3) {
@@ -57,17 +58,21 @@ io.on('connection', (client) => {
         clearTimeout(lockTimeout)
         console.log('you found a set!')
         gameState.lockedUsers = {}
-        gameState = _collectSet(indices, gameState)
-        if (gameState.board.length < 12) {
-          gameState = _deal(gameState)
-        }
+        gameState.selected = {}
+        modStateAndSync(_collectSet)(indices, gameState)
+        setTimeout(function() {
+          if (gameState.board.filter(i => i !== null).length < 12) {
+            modStateAndSync(_deal)(gameState)
+          } else {
+            modStateAndSync(_cleanBoard)(gameState)
+          }
+        }, tTime)
       }, () => {
         gameState.lockedUsers[client.id] = true
       })
       //reset selected
       gameState.selected = {}
     }
-    sync()
   })
 });
 

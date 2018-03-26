@@ -39,10 +39,22 @@ function _startNewGame(initialState=cardsInitialState) {
 
 function _deal(state) {
   let { deck, board } = state
-  let newCards = deck.splice(0, 3)
+  let newBoard = [ ...board ]
+  let replace = false;
+  let len = board.length
+  for (let i = 0; i < len; i++) {
+    let b = board[i]
+    if (b === null) {
+      newBoard[i] = deck.pop() // could use shift() too, if we cared about what end of the deck we're drawing from
+      replace = true;
+    }
+  }
+  if (!replace) {
+    newBoard = newBoard.concat(deck.splice(0, 3))
+  }
   return Object.assign({}, state, {
     deck: [ ...deck ],
-    board: [ ...board, ...newCards ]
+    board: newBoard
   })
 }
 
@@ -66,7 +78,7 @@ function _collectSet(indices, state) {
   board = [ ...board ]
   collected = [ ...collected ]
   for (let index of indices) {
-    board.splice(board.indexOf(index), 1)
+    board[board.indexOf(index)] = null
     collected.push(index)
   }
   return Object.assign({}, state, {
@@ -97,11 +109,21 @@ function _checkSet(indices, success, fail) {
   }
   success()
 }
+
+function _cleanBoard(state) {
+  return Object.assign({}, state, {
+    board: state.board.filter(b => b !== null),
+  })
+}
+
+const tTime = 200
 module.exports = {
   cardsInitialState,
   _startNewGame,
   _deal,
+  _cleanBoard,
   _toggleCard,
   _checkSet,
   _collectSet,
+  tTime,
 }

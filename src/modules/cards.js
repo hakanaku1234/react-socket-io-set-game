@@ -1,20 +1,27 @@
 
-const { cardsInitialState, _startNewGame, _deal, _toggleCard, _checkSet, _collectSet } = require('../utils')
+const { cardsInitialState, _startNewGame, _deal, _cleanBoard, _toggleCard, _checkSet, _collectSet, tTime } = require('../utils')
 /* ACTION TYPES */
+export const CLEAR_STATE = 'CLEAR_STATE';
 export const START_NEW_GAME = 'START_NEW_GAME';
 export const DEAL = 'DEAL';
 export const TOGGLE_CARD = 'TOGGLE_CARD';
 export const RESET_SELECTED = 'RESET_SELECTED';
 export const COLLECT_SET = 'COLLECT_SET'
+export const CLEAN_BOARD = 'CLEAN_BOARD'
 
 /* REDUCER */
 export default function (state = cardsInitialState, action) {
   switch (action.type) {
+    case CLEAR_STATE:
+      return Object.assign({}, cardsInitialState)
     case START_NEW_GAME: {
       return _startNewGame()
     }
     case DEAL: {
       return _deal(state)
+    }
+    case CLEAN_BOARD: {
+      return _cleanBoard(state)
     }
     // case COLLECT:
     case TOGGLE_CARD: {
@@ -36,9 +43,12 @@ export default function (state = cardsInitialState, action) {
 
 /* ACTION CREATORS */
 export function startNewGame() {
-  return {
-    type: START_NEW_GAME
-  };
+  return function(dispatch) {
+    dispatch({ type: CLEAR_STATE })
+    setTimeout(function() {
+      dispatch({ type: START_NEW_GAME })
+    }, tTime)
+  }
 }
 
 export function deal() {
@@ -80,9 +90,13 @@ function checkSet(indices) {
         type: COLLECT_SET,
         indices
       })
-      if (getState().cards.board.length < 12) {
-        dispatch(deal())
-      }
+        setTimeout(function() {
+          if (getState().cards.board.filter(i => i !== null).length < 12) {
+            dispatch(deal())
+          } else {
+            dispatch({ type: CLEAN_BOARD })
+          }
+        }, tTime)
     })
 
   }
