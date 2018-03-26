@@ -26,3 +26,22 @@ svg + svg {
   align-items: center;
   justify-content: flex-start;
 }
+
+.board--locked {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: gray;
+  opacity: 0.25;
+}
+
+.locked-message {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 50px;
+}

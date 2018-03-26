@@ -13,7 +13,12 @@ class MultiplayerBoard extends React.Component {
     super()
     socket.on('sync', state => {
       const { board, selected, deck, collected } = state
+      console.log(selected)
       this.setState({ board, selected, deck, collected })
+    })
+    socket.on('is_locked', isLocked => {
+      console.log('locked?', isLocked)
+      this.setState({ isLocked })
     })
   }
   state = {
@@ -21,6 +26,7 @@ class MultiplayerBoard extends React.Component {
     selected: {},
     deck: [],
     collected: [],
+    isLocked: false,
   }
 
   _clickCard = (deckIndex) => () => {
@@ -28,18 +34,29 @@ class MultiplayerBoard extends React.Component {
   }
 
   render() {
-    const { board, selected } = this.state
+    const { board, selected, isLocked } = this.state
     return (
       <React.Fragment>
         <MultiPlayerControls
           deck={ this.state.deck }
           collected={ this.state.collected }
         />
-        <Board
-          board={ board }
-          selected={ selected }
-          clickCard={ this._clickCard }
-        />
+        <div style={ { position: 'relative'} }>
+          { isLocked &&
+            <React.Fragment>
+              <div className='locked-message'>
+                { 'LOCKED' }
+              </div>
+              <div className='board--locked'/>
+            </React.Fragment>
+          }
+
+          <Board
+            board={ board }
+            selected={ selected }
+            clickCard={ this._clickCard }
+          />
+        </div>
       </React.Fragment>
     )
   }

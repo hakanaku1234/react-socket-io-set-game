@@ -28,10 +28,10 @@ const cardsInitialState = {
   selected: {}
 };
 
-function _startNewGame() {
+function _startNewGame(initialState=cardsInitialState) {
   let newDeck = getNewDeck();
   let board = newDeck.splice(0, 12)
-  return Object.assign({}, cardsInitialState, {
+  return Object.assign({}, initialState, {
     deck: [ ...newDeck ],
     board,
   });
@@ -76,7 +76,7 @@ function _collectSet(indices, state) {
 }
 
 
-function _checkSet(indices, cb) {
+function _checkSet(indices, success, fail) {
   const attrs = ['color', 'count', 'shape', 'shade']
   const attrCounts = {}
   for (let i of indices) {
@@ -91,11 +91,11 @@ function _checkSet(indices, cb) {
       /* bad set. attribute must either be all different (3)
           or all the same (1)
       */
-      console.log('bad set')
+      if (fail) { fail() }
       return;
     }
   }
-  cb()
+  success()
 }
 module.exports = {
   cardsInitialState,
