@@ -5,9 +5,9 @@ import React from 'react';
 import MultiPlayerControls from './MultiPlayerControls'
 import Board from './Board'
 
-const  socket = openSocket('http://localhost:8000');
+const socket = openSocket('http://localhost:8000');
 
-class MultiplayerBoard extends React.Component {
+class MultiPlayerBoard extends React.Component {
 
   constructor() {
     super()
@@ -60,4 +60,4 @@ class MultiplayerBoard extends React.Component {
   }
 }
 
-export default MultiplayerBoard;
+export default MultiPlayerBoard;
