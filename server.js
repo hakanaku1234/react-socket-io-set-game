@@ -2,16 +2,14 @@ const { cardsInitialState, _startNewGame, _toggleCard, _checkSet, _collectSet, _
 
 const io = require('socket.io')();
 
-let _client;
 
 let gameState = Object.assign({}, cardsInitialState)
 
 function sync() {
-  _client.emit('sync', gameState)
+  io.emit('sync', gameState)
 }
 
 io.on('connection', (client) => {
-  _client = client
   sync()
 
   client.on('new_game', () => {
