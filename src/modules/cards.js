@@ -57,10 +57,12 @@ export function deal() {
   }
 }
 
+let clickTimeout;
 export function clickCard(index) {
   return function(dispatch) {
     dispatch(toggleCard(index))
-    setTimeout(function() {
+    clearTimeout(clickTimeout);
+    clickTimeout = setTimeout(function() {
       dispatch(checkSelected())
     }, 500)
   }
