@@ -12,10 +12,14 @@ let gameState = Object.assign({}, serverInitialState)
 
 let lockTimeout;
 
+var clientIds = []
 io.on('connection', (client) => {
+  clientIds.push(client.id)
   function sync() {
     io.emit('sync', gameState)
-    io.to(client.id).emit('is_locked', !!gameState.lockedUsers[client.id])
+    for (let clientId of clientIds) {
+      io.to(clientId).emit('is_locked', !!gameState.lockedUsers[clientId])
+    }
   }
 
   let modStateAndSync = (fn) => (...args) => {
