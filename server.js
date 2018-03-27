@@ -41,6 +41,9 @@ io.on('connection', (client) => {
 
   sync()
 
+  client.on('init', () => {
+    sync()
+  })
   client.on('new_game', () => {
     modStateAndSync(_startNewGame)(serverInitialState)
   })

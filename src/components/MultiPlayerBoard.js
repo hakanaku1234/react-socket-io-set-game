@@ -11,6 +11,7 @@ class MultiPlayerBoard extends React.Component {
 
   constructor() {
     super()
+    socket.emit('init')
     socket.on('sync', state => {
       const { board, selected, deck, collected } = state
       this.setState({ board, selected, deck, collected })
