@@ -2,83 +2,148 @@ const { cardsInitialState, _startNewGame, _toggleCard, _checkSet, _collectSet, _
 
 const io = require('socket.io')();
 
-let serverInitialState = Object.assign({}, cardsInitialState, {
-  activeUser: '',
-  lockedUsers: {},
-})
-let gameState = Object.assign({}, serverInitialState)
+function getServerInitialState() {
+  return Object.assign({}, cardsInitialState, {
+    activeUser: '',
+    lockedUsers: {},
+  })
+}
 
-//TODO: use namespaces/rooms for multiple games
+let gameStates = {}; //map<roomId, gameState>
+let lockTimeouts = {}; //map<roomId, lockTimeout>
+//have to store the clientIds here for to emit locked state
+let clientIds = []
+var roomPK = 1;
+let rooms = []
 
-let lockTimeout;
+function syncRooms(clientId) {
+  (clientId ? io.to(clientId) : io).emit('fetch_rooms_list', rooms)
+}
 
-var clientIds = []
+function sync(roomId) {
+  let gameState = gameStates[roomId]
+  io.in(roomId).emit('sync', gameState)
+
+  for (let clientId of clientIds) {
+    const isLocked = gameState && gameState.lockedUsers ? !!gameState.lockedUsers[clientId] : false
+    io.to(clientId).emit('is_locked', isLocked)
+  }
+}
+
+let modStateAndSync = (roomId, fn) => (...args) => {
+  gameStates[roomId] = fn(...args)
+  sync(roomId)
+  return gameStates[roomId]
+}
+
 io.on('connection', (client) => {
+  console.log(client.id)
   clientIds.push(client.id)
-  function sync() {
-    io.emit('sync', gameState)
-    for (let clientId of clientIds) {
-      io.to(clientId).emit('is_locked', !!gameState.lockedUsers[clientId])
+
+  client.on('view_rooms', () => {
+    syncRooms(client.id)
+  })
+
+  client.on('new_room', () => {
+    const newRoomId = `Room_${roomPK++}`;
+    rooms.push(newRoomId)
+    syncRooms()
+  })
+
+  client.on('join_room', (roomId) => {
+    //client should leave all other rooms and join this one room.
+    for (let room of rooms.filter(r=>r!=roomId)) {
+      client.leave(room)
     }
+    client.join(roomId, () => {
+      if (gameStates[roomId]) {
+        sync(roomId)
+      } else {
+        newGame(roomId)
+      }
+    })
+
+  })
+
+  client.on('init_board', (roomId) => {
+    sync(roomId)
+  })
+
+  client.on('init_game', (roomId) => {
+    newGame(roomId)
+  })
+
+  client.on('deal', (roomId) => {
+    let gameState = gameStates[roomId]
+    modStateAndSync(roomId, _deal)(gameState)
+  })
+
+  function newGame(roomId) {
+    modStateAndSync(roomId, _startNewGame)(getServerInitialState())
+  }
+  function onBadSet(gameState) {
+    //bad set. lock user and clear out selected and active user
+    gameState.activeUser = null
+    gameState.selected = {}
+    gameState.lockedUsers[client.id] = true
   }
 
-  let modStateAndSync = (fn) => (...args) => {
-    gameState = fn(...args)
-    sync()
-  }
-  function setCountDown() {
+  client.on('click_card', (roomId, cardIndex) => {
+    let gameState = gameStates[roomId]
+    if (!gameState) { return newGame(roomId) }
+    //don't allow locked users to click
+    if (gameState.lockedUsers[client.id]) { return; }
+
+    //enforce only one player being able to click cards during turn
     if (!gameState.activeUser) {
       gameState.activeUser = client.id
       //start countdown of turn and lock out if unsuccessful
-      lockTimeout = setTimeout(function() {
-        gameState.activeUser = null
-        gameState.selected = {}
-        gameState.lockedUsers[client.id] = true
-        sync()
+      lockTimeouts[roomId] = setTimeout(() => {
+        //must always get current state at start of timeout callback if modifying
+        //since we don't know if gameState has been updated since
+        let gameState = gameStates[roomId]
+        onBadSet(gameState)
+        sync(roomId)
       }, 3000)
+    } else if (gameState.activeUser !== client.id) {
+      return;
     }
-  }
 
-  sync()
+    //change state so that player has clicked a card
+    gameState = modStateAndSync(roomId, _toggleCard)(cardIndex, gameState)
 
-  client.on('init', () => {
-    sync()
-  })
-  client.on('new_game', () => {
-    modStateAndSync(_startNewGame)(serverInitialState)
-  })
-
-  client.on('deal', () => {
-    modStateAndSync(_deal)(gameState)
-  })
-  client.on('click_card', (cardIndex) => {
-    if (gameState.lockedUsers[client.id]) { return; }
-    setCountDown() //sets activeUser, must do this before activeUser check below
-    if (gameState.activeUser !== client.id) { return; }
-    modStateAndSync(_toggleCard)(cardIndex, gameState)
-    const { selected } =  gameState
-    const indices = Object.keys(selected).map(str => parseInt(str))
+    //now check
+    const indices = Object.keys(gameState.selected).map(str => parseInt(str))
     if (indices.length === 3) {
       gameState.activeUser = null
       _checkSet(indices, () => {
+        //successful set
+        let gameState = gameStates[roomId]
         //clear out locking timeout if player has successfully found a set
-        clearTimeout(lockTimeout)
-        console.log('you found a set!')
+        clearTimeout(lockTimeouts[roomId])
+        console.log('player found a set!')
         gameState.lockedUsers = {}
         gameState.selected = {}
-        modStateAndSync(_collectSet)(indices, gameState)
-        setTimeout(function() {
+        gameState = modStateAndSync(roomId, _collectSet)(indices, gameState)
+        setTimeout(() => {
+          //must always get current state at start of timeout callback if modifying
+          //since we don't know if gameState has been updated since
+          let gameState = gameStates[roomId]
           if (gameState.board.filter(i => i !== null).length < 12) {
-            modStateAndSync(_deal)(gameState)
+            gameState = modStateAndSync(roomId, _deal)(gameState)
           } else {
-            modStateAndSync(_cleanBoard)(gameState)
+            gameState = modStateAndSync(roomId, _cleanBoard)(gameState)
           }
         }, tTime)
       }, () => {
-        gameState.lockedUsers[client.id] = true
+        //bad set. lock user and clear out selected
+        let gameState = gameStates[roomId]
+        onBadSet(gameState)
+        //sync after transition time, so that UI shows which 3rd card was selected
+        setTimeout(() => {
+          sync(roomId)
+        }, 2*tTime)
       })
-      //reset selected
-      gameState.selected = {}
     }
   })
 });

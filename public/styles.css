@@ -2,7 +2,7 @@ svg + svg {
   margin-left: 10px;
 }
 
-.card {
+.gamecard {
   border: 1px solid #4c4b4b;
   border-radius: 20px;
   height: 130px;
@@ -16,7 +16,7 @@ svg + svg {
   cursor: pointer;
 }
 
-.card--selected {
+.gamecard--selected {
   border: 2px solid #2196f3;
   padding: 3px;
   transform:scale(1.065, 1.1);
@@ -69,4 +69,41 @@ svg + svg {
 .container.is-fluid {
   margin-left: 32px !important;
   margin-right: 32px !important;
+}
+
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 10s linear infinite;
+  -moz-animation: rotating 10s linear infinite;
+  -ms-animation: rotating 10s linear infinite;
+  -o-animation: rotating 10s linear infinite;
+  animation: rotating 10s linear infinite;
 }

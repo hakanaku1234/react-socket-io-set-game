@@ -14,8 +14,8 @@ function Card(props) {
   const { count, onClick, selected, ...rest } = props
   return (
     <div
-      className={ classnames('card', {
-        'card--selected': selected
+      className={ classnames('gamecard', {
+        'gamecard--selected': selected
       }) }
       onClick={ onClick }
     >
