@@ -1,10 +1,10 @@
 /*eslint-disable react/no-multi-comp */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 import Home from './components/Home'
-import MultiPlayerBoard from './components/MultiPlayerBoard';
+import GamesList from './components/GamesList';
 import SinglePlayerBoard from './components/SinglePlayerBoard';
 
 //https://stackoverflow.com/a/43263057
@@ -14,7 +14,7 @@ function NavItem({children, to, exact, ...props}) {
         path={to}
         exact={exact}
         children={({match}) => (
-          <li className={match && match.isExact ? 'is-active' : null}>
+          <li className={match ? 'is-active' : null}>
             <Link
               to={to}
               { ...props }
@@ -38,29 +38,32 @@ function App() {
         <div className='tabs is-centered'>
           <ul>
             <NavItem
+              exact
               to='/'
-            >{ 'Home' }</NavItem>
-            <NavItem
-              to='/singleplayer'
-            >{ 'Single Player' }</NavItem>
-            <NavItem
-              to='/multiplayer'
-            >{ 'Multiplayer' }</NavItem>
+            >
+              { 'Home' }
+            </NavItem>
+            <NavItem to='/singleplayer' >
+              { 'Single Player' }
+            </NavItem>
+            <NavItem to='/multiplayer'>
+              { 'Multiplayer' }
+            </NavItem>
           </ul>
         </div>
 
         <Route
           exact
-          path="/"
+          path='/'
           component={ Home }
         />
         <Route
-          path="/singleplayer"
+          path='/singleplayer'
           component={ SinglePlayerBoard }
         />
         <Route
-          path="/multiplayer"
-          component={ MultiPlayerBoard }
+          path='/multiplayer'
+          component={ GamesList }
         />
       </div>
     </Router>

@@ -1,21 +1,22 @@
-import openSocket from 'socket.io-client';
-
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux'
 
 import MultiPlayerControls from './MultiPlayerControls'
 import Board from './Board'
 
-const socket = openSocket('http://localhost:8000');
-
 class MultiPlayerBoard extends React.Component {
-
-  constructor() {
-    super()
-    socket.on('sync', state => {
+  constructor(props) {
+    super(props)
+    const { match: { params } } = props;
+    props.socket.emit('join_room', params.roomId)
+    props.socket.emit('init_board', params.roomId)
+    props.socket.on('sync', state => {
+      console.log(state)
       const { board, selected, deck, collected } = state
       this.setState({ board, selected, deck, collected })
     })
-    socket.on('is_locked', isLocked => {
+    props.socket.on('is_locked', isLocked => {
       this.setState({ isLocked })
     })
   }
@@ -27,8 +28,29 @@ class MultiPlayerBoard extends React.Component {
     isLocked: false,
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { match: { params } } = this.props;
+    const { match: { params: nextParams } } = nextProps;
+
+    if (params.roomId != nextParams.roomId) {
+      this.props.socket.emit('join_room', nextParams.roomId)
+      this.props.socket.emit('init_board', nextParams.roomId)
+    }
+  }
+
   _clickCard = (deckIndex) => () => {
-    socket.emit('click_card', deckIndex)
+    const { match: { params } } = this.props;
+    this.props.socket.emit('click_card', params.roomId, deckIndex)
+  }
+
+  _startMultiNewGame = () => {
+    const { match: { params } } = this.props;
+    this.props.socket.emit('init_game', params.roomId)
+  }
+
+  _deal = () => {
+    const { match: { params } } = this.props;
+    this.props.socket.emit('deal', params.roomId)
   }
 
   render() {
@@ -39,6 +61,8 @@ class MultiPlayerBoard extends React.Component {
           board={ this.state.board }
           deck={ this.state.deck }
           collected={ this.state.collected }
+          startNewGame={ this._startMultiNewGame }
+          deal={ this._deal }
         />
         <div style={ { position: 'relative'} }>
           { isLocked &&
@@ -61,4 +85,20 @@ class MultiPlayerBoard extends React.Component {
   }
 }
 
-export default MultiPlayerBoard;
+MultiPlayerBoard.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      roomId: PropTypes.string.isRequired,
+    }).isRequired
+  }).isRequired,
+  socket: PropTypes.shape({
+    on: PropTypes.func.isRequired,
+    emit: PropTypes.func.isRequired,
+  }).isRequired,
+}
+
+function mapStateToProps({ cards: { socket} }) {
+  return { socket}
+}
+
+export default connect(mapStateToProps)(MultiPlayerBoard);

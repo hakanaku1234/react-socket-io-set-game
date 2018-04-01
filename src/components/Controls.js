@@ -23,9 +23,9 @@ function Controls(props) {
         </button>
       </div>
       <progress
-        className="progress"
+        className='progress'
         value={ progressPct }
-        max="100"
+        max='100'
       >
         { `${progressPct}%` }
       </progress>

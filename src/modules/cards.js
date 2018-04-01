@@ -1,3 +1,4 @@
+import openSocket from 'socket.io-client';
 
 const { cardsInitialState, _startNewGame, _deal, _cleanBoard, _toggleCard, _checkSet, _collectSet, tTime } = require('../utils')
 /* ACTION TYPES */
@@ -9,8 +10,11 @@ export const RESET_SELECTED = 'RESET_SELECTED';
 export const COLLECT_SET = 'COLLECT_SET'
 export const CLEAN_BOARD = 'CLEAN_BOARD'
 
+const  socket = openSocket('http://localhost:8000');
+
+const initialState = Object.assign({}, cardsInitialState, { socket })
 /* REDUCER */
-export default function (state = cardsInitialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case CLEAR_STATE:
       return Object.assign({}, cardsInitialState)
