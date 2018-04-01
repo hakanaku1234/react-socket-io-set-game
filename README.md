@@ -1,5 +1,28 @@
-#React + Redux Starter Project
----
-This project was created as a starting point for React projects (using create-react-app) with Redux and Redux-Thunk. It is based off the tutorial [here](https://code.likeagirl.io/tutorial-for-adding-redux-to-a-react-app-1a94cc1738e5). The tutorial was meant as a guide and does not provide working code. This project follows that guide, with updates to eliminate bugs, and get the project fully running.
+#Set Card Game
 
-To adapt this code to call your own API, you will need to update the proxy in `/package.json` and the fetch url in `/src/actions/stuffActions.js`.
+#Background
+I started this project to learn about websockets.  I already have a solid background in react and redux, so I thought I'd build off on that with new technologies.
+
+#Milestones
+- Create the SET card game in react
+- Enable multiple players to play the game with socket.io
+- Host the game on heroku
+
+#Quick Start
+```
+npm install
+npm run server
+```
+And in a new terminal tab:
+```
+npm run start
+```
+
+#Technologies Used
+- react
+- redux
+- socket.io*
+- react-transition-group*
+- heroku*
+
+Starred tech is new to me
