@@ -1,12 +1,11 @@
 /*eslint-disable react/no-multi-comp */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 import Home from './components/Home'
 import GamesList from './components/GamesList';
 import SinglePlayerBoard from './components/SinglePlayerBoard';
-import MultiPlayerBoard from './components/MultiPlayerBoard';
 
 //https://stackoverflow.com/a/43263057
 function NavItem({children, to, exact, ...props}) {
@@ -38,7 +37,10 @@ function App() {
       <div className='app'>
         <div className='tabs is-centered'>
           <ul>
-            <NavItem to='/home'>
+            <NavItem
+              exact
+              to='/'
+            >
               { 'Home' }
             </NavItem>
             <NavItem to='/singleplayer' >
@@ -50,15 +52,9 @@ function App() {
           </ul>
         </div>
 
-
-        <Redirect
-          strict
-          from='/'
-          to='/home'
-        />
         <Route
           exact
-          path='/home'
+          path='/'
           component={ Home }
         />
         <Route

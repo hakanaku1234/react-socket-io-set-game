@@ -28,8 +28,8 @@ class GamesList extends React.Component {
   render() {
     return (
       <div className='container is-fluid'>
-        <div class="columns">
-          <div class="column">
+        <div className='columns'>
+          <div className='column is-one-fifth'>
             <aside className='menu'>
               <ul className='menu-list'>
                 <li>

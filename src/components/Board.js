@@ -11,7 +11,7 @@ const Fade = ({ children, ...props }) => (
   <CSSTransition
     {...props}
     timeout={ 300 }
-    classNames="fade"
+    classNames='fade'
   >
     {children}
   </CSSTransition>

@@ -27,14 +27,14 @@ class Shape extends React.Component {
         <pattern
           id={`pattern-stripe-${createKey(color)}`}
           width={ stripeSpacing }
-          height="4"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(90)"
+          height='4'
+          patternUnits='userSpaceOnUse'
+          patternTransform='rotate(90)'
         >
           <rect
             width={ stripeWidth }
-            height="4"
-            // transform="translate(0,0)"
+            height='4'
+            // transform='translate(0,0)'
             fill={ color }
           />
         </pattern>
