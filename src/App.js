@@ -7,6 +7,11 @@ import Home from './components/Home'
 import GamesList from './components/GamesList';
 import SinglePlayerBoard from './components/SinglePlayerBoard';
 
+import openSocket from 'socket.io-client';
+const socket = openSocket('http://localhost:8000');
+
+export const SocketContext = React.createContext(socket);
+
 //https://stackoverflow.com/a/43263057
 function NavItem({children, to, exact, ...props}) {
     return (
@@ -31,42 +36,54 @@ NavItem.propTypes = {
   to: PropTypes.string.isRequired,
 };
 
+class GamesListWrapper extends React.Component {
+  render() {
+    return (
+      <SocketContext.Consumer>
+        { socket => ( <GamesList socket = { socket } { ...this.props } />) }
+      </SocketContext.Consumer>
+    )
+  }
+}
+
 function App() {
   return (
-    <Router>
-      <div className='app'>
-        <div className='tabs is-centered'>
-          <ul>
-            <NavItem
-              exact
-              to='/'
-            >
-              { 'Home' }
-            </NavItem>
-            <NavItem to='/singleplayer' >
-              { 'Single Player' }
-            </NavItem>
-            <NavItem to='/multiplayer'>
-              { 'Multiplayer' }
-            </NavItem>
-          </ul>
-        </div>
+    <SocketContext.Provider value={ socket }>
+      <Router>
+        <div className='app'>
+          <div className='tabs is-centered'>
+            <ul>
+              <NavItem
+                exact
+                to='/'
+              >
+                { 'Home' }
+              </NavItem>
+              <NavItem to='/singleplayer' >
+                { 'Single Player' }
+              </NavItem>
+              <NavItem to='/multiplayer'>
+                { 'Multiplayer' }
+              </NavItem>
+            </ul>
+          </div>
 
-        <Route
-          exact
-          path='/'
-          component={ Home }
-        />
-        <Route
-          path='/singleplayer'
-          component={ SinglePlayerBoard }
-        />
-        <Route
-          path='/multiplayer'
-          component={ GamesList }
-        />
-      </div>
-    </Router>
+          <Route
+            exact
+            path='/'
+            component={ Home }
+          />
+          <Route
+            path='/singleplayer'
+            component={ SinglePlayerBoard }
+          />
+          <Route
+            path='/multiplayer'
+            component={ GamesListWrapper }
+          />
+        </div>
+      </Router>
+    </SocketContext.Provider>
   );
 }
 

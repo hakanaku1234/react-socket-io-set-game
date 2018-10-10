@@ -1,9 +1,21 @@
+/*eslint-disable react/no-multi-comp */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux'
 
 import MultiPlayerBoard from './MultiPlayerBoard';
 import { Route, Link } from 'react-router-dom';
+
+import { SocketContext } from '../App'
+
+class MultiPlayerBoardWrapper extends React.Component {
+  render() {
+    return (
+       <SocketContext.Consumer>
+         { socket => (<MultiPlayerBoard socket={ socket } { ...this.props } />) }
+       </SocketContext.Consumer>
+    )
+  }
+}
 
 class GamesList extends React.Component {
   constructor(props) {
@@ -56,7 +68,7 @@ class GamesList extends React.Component {
           <div className='column'>
             <Route
               path='/multiplayer/:roomId'
-              component={ MultiPlayerBoard }
+              component = { MultiPlayerBoardWrapper }
             />
           </div>
         </div>
@@ -75,8 +87,4 @@ GamesList.propTypes = {
   }).isRequired,
 }
 
-function mapStateToProps({ cards: { socket} }) {
-  return { socket}
-}
-
-export default connect(mapStateToProps)(GamesList);
+export default GamesList;
