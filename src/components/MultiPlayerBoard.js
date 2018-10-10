@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux'
 
 import MultiPlayerControls from './MultiPlayerControls'
 import Board from './Board'
@@ -97,8 +96,4 @@ MultiPlayerBoard.propTypes = {
   }).isRequired,
 }
 
-function mapStateToProps({ cards: { socket} }) {
-  return { socket}
-}
-
-export default connect(mapStateToProps)(MultiPlayerBoard);
+export default MultiPlayerBoard;
