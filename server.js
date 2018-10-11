@@ -1,3 +1,18 @@
+const express = require('express');
+const path = require('path');
+const port = process.env.PORT || 8080;
+const app = express();
+
+// the __dirname is the current directory from where the script is running
+app.use(express.static(path.join(__dirname, '/build/')));
+
+// send the user to index html page inspite of the url
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/build/', 'index.html'));
+});
+
+app.listen(port);
+
 const { cardsInitialState, _startNewGame, _toggleCard, _checkSet, _collectSet, _deal, _cleanBoard, tTime } = require('./src/utils')
 
 const io = require('socket.io')();
@@ -148,6 +163,6 @@ io.on('connection', (client) => {
   })
 });
 
-const port = 8000;
-io.listen(port);
+const port2 = 8000;
+io.listen(port2);
 console.log('listening on port ', port);
